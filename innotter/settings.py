@@ -79,7 +79,14 @@ WSGI_APPLICATION = "innotter.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    "default": env.dj_db_url("DATABASE_URL"),
+    "default": {
+        "ENGINE": env.str("ENGINE"),
+        "NAME": env.str("NAME"),
+        "USER": env.str("USER"),
+        "PASSWORD": env.str("PASSWORD"),
+        "HOST": "db",
+        "PORT": env.str("PORT"),
+    }
 }
 
 
