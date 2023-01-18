@@ -30,7 +30,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = ["0.0.0.0", ]
+ALLOWED_HOSTS = env.str("ALLOWED_HOSTS").split()
 
 
 # Application definition
