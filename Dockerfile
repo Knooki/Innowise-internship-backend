@@ -8,13 +8,13 @@ WORKDIR /code
 
 COPY Pipfile Pipfile.lock ./
 
-RUN python -m pip install --upgrade pip
+RUN python -m pip install --upgrade pip && \
+    pip install pipenv && \
+    pipenv install --dev --system --deploy
 
-RUN pip install pipenv 
-RUN pipenv install --dev --system --deploy
+COPY . .
+EXPOSE 8000
 
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
-COPY . .
+CMD /entrypoint.sh
