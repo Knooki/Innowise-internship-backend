@@ -13,8 +13,8 @@ RUN python -m pip install --upgrade pip
 RUN pip install pipenv 
 RUN pipenv install --dev --system --deploy
 
+COPY . .
+
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
-COPY . .
+CMD ["/entrypoint.sh"]

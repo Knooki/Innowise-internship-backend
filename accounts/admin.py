@@ -6,11 +6,11 @@ from .models import User
 
 class UserAdmin(UserAdmin):
     
-    readonly_fields=[
+    readonly_fields=(
         "date_joined",
-    ]
+    )
     model = User
-    list_display = [
+    list_display = (
         "email",
         "username",
         "role",
@@ -19,7 +19,7 @@ class UserAdmin(UserAdmin):
         "last_name",
         "is_staff",
         "is_blocked",
-    ]
+    )
     fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("role", "title", "is_blocked",)}),)
     add_fieldsets = UserAdmin.add_fieldsets + ((None, {"fields": ("email", "first_name", "last_name", "role", "title", "is_blocked",)}),)
     
