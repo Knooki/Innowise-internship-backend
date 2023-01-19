@@ -1,7 +1,11 @@
 {
     "_meta": {
         "hash": {
+<<<<<<< HEAD
             "sha256": "f16103e057a803539a82c0df263965c23a36cf1f3db8fc24a7f63be375041ca4"
+=======
+            "sha256": "27379e70b2efd4b9cca0fbd9a5db98b3630c5033dd2214ae48667ffb408d851b"
+>>>>>>> b114f3b (iib-5/created-access-token-validation-middleware-custom-exceptions)
         },
         "pipfile-spec": 6,
         "requires": {
@@ -25,6 +29,7 @@
             "markers": "python_version >= '3.7'",
             "version": "==3.6.0"
         },
+<<<<<<< HEAD
         "attrs": {
             "hashes": [
                 "sha256:29e95c7f6778868dbd49170f98f8818f78f3dc5e0e37c0b1f474e3561b240836",
@@ -33,6 +38,8 @@
             "markers": "python_version >= '3.6'",
             "version": "==22.2.0"
         },
+=======
+>>>>>>> b114f3b (iib-5/created-access-token-validation-middleware-custom-exceptions)
         "cffi": {
             "hashes": [
                 "sha256:00a9ed42e88df81ffae7a8ab6d9356b371399b91dbdf0c3cb1e84c03a13aceb5",
