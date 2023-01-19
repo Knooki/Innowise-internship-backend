@@ -56,6 +56,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Local
+    "innotter.middleware.JWTMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -138,5 +140,20 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ORIGIN_WHITELIST = tuple(env.str("CORS_ALLOWED_ORIGINS").split())
+CORS_ORIGIN_WHITELIST = tuple(env.list("CORS_ALLOWED_ORIGINS"))
 CORS_ALLOW_CREDENTIALS = True # to accept cookies via ajax request
+
+ACCESS_PUBLIC = bytes(env.str("ACCESS_TOKEN_PUBLIC_KEY"), "utf-8")
+ACCESS_PRIVATE = bytes(env.str("ACCESS_TOKEN_PRIVATE_KEY"), "utf-8")
+ACCESS_PHRASE = bytes(env.str("ACCESS_TOKEN_PASSPHRASE"), "utf-8")
+# ACCESS_EXP = env.str("ACCESS_TOKEN_EXPIRES_IN")
+
+REFRESH_PUBLIC = bytes(env.str("REFRESH_TOKEN_PUBLIC_KEY"), "utf-8")
+REFRESH_PRIVATE = bytes(env.str("REFRESH_TOKEN_PRIVATE_KEY"), "utf-8")
+REFRESH_PHRASE = bytes(env.str("REFRESH_TOKEN_PASSPHRASE"), "utf-8")
+# REFRESH_EXP = env.str("REFRESH_TOKEN_EXPIRES_IN")
+
+JWT_UNAUTHENTICATED_URL_PATTERNS = env.list("JWT_UNAUTHENTICATED_URL_PATTERNS")
+REGEX_BEARER = env.str("REGEX_BEARER")
+
+# serailizers в git stash
