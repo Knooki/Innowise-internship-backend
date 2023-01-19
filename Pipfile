@@ -9,6 +9,7 @@ psycopg2-binary = "*"
 djangorestframework = "*"
 environs = "*"
 dj-database-url = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
