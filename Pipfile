@@ -10,6 +10,7 @@ djangorestframework = "*"
 environs = "*"
 dj-database-url = "*"
 django-cors-headers = "*"
+pyjwt = {extras = ["crypto"], version = "*"}
 
 [dev-packages]
 
