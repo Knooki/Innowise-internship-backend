@@ -171,3 +171,5 @@ REGEX_BEARER = env.str("REGEX_BEARER")
 
 INTERNAL_EXTRA_JWT_OPTIONS = env.dict("INTERNAL_EXTRA_JWT_OPTIONS")
 # serailizers в git stash
+CORS_ORIGIN_WHITELIST = tuple(env.str("CORS_ALLOWED_ORIGINS").split())
+CORS_ALLOW_CREDENTIALS = True # to accept cookies via ajax request
