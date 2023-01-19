@@ -13,3 +13,6 @@ db.sqlite3
 
 # celery 
 #celerybeat-schedule.* 
+
+# rsa keys
+/rsa_keys
