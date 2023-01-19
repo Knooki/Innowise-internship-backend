@@ -15,6 +15,8 @@ RUN python -m pip install --upgrade pip && \
 COPY . .
 EXPOSE 8000
 
+COPY . .
+
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 CMD /entrypoint.sh
