@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Local
     "accounts",
     "authentication",
+    "posts",
 ]
 
 MIDDLEWARE = [
