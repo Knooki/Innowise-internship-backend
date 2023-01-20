@@ -16,3 +16,10 @@ db.sqlite3
 
 # rsa keys
 /rsa_keys
+
+# test
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
