@@ -1,0 +1,87 @@
+[
+    {
+        "model": "accounts.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$390000$N8qmod6UwFRkvmVNx5Kfcq$dtlPPDBCe3DyyJMb7N+HBdhNHW83busjywT9vwGIpS0=",
+            "last_login": "2023-01-20T10:09:19.771Z",
+            "is_superuser": true,
+            "username": "knooki",
+            "first_name": "",
+            "last_name": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2023-01-20T10:09:14.920Z",
+            "email": "knukknakiknak@gmail.com",
+            "image_s3_path": null,
+            "role": "",
+            "title": "",
+            "is_blocked": false,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "accounts.user",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$390000$xYRjv37XpvrGFV75i0tiaO$sX/lhNhrbafhov/7hmV2uFiXSS7JNxeXjQ500Ktc9YI=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "Ksuha",
+            "first_name": "Ksenia",
+            "last_name": "Hvozeva",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-01-20T10:10:42.356Z",
+            "email": "aliaksei.aheyeu@gmail.com",
+            "image_s3_path": null,
+            "role": "user",
+            "title": "some_title",
+            "is_blocked": false,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "posts.tag",
+        "pk": 1,
+        "fields": {
+            "name": "test_tag"
+        }
+    },
+    {
+        "model": "posts.page",
+        "pk": 1,
+        "fields": {
+            "name": "test_page",
+            "uuid": "1234",
+            "description": "test_desc",
+            "owner": 2,
+            "image": null,
+            "is_private": false,
+            "unblock_date": null,
+            "tags": [
+                1
+            ],
+            "followers": [
+                1
+            ],
+            "follow_requests": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "posts.post",
+        "pk": 1,
+        "fields": {
+            "title": "test_post",
+            "page": 1,
+            "content": "test_content",
+            "reply_to": null,
+            "created_at": "2023-01-20T10:11:52.831Z",
+            "updated_at": "2023-01-20T10:11:52.831Z"
+        }
+    }
+]
