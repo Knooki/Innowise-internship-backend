@@ -2,10 +2,14 @@
     "_meta": {
         "hash": {
 <<<<<<< HEAD
+<<<<<<< HEAD
             "sha256": "f16103e057a803539a82c0df263965c23a36cf1f3db8fc24a7f63be375041ca4"
 =======
             "sha256": "27379e70b2efd4b9cca0fbd9a5db98b3630c5033dd2214ae48667ffb408d851b"
 >>>>>>> b114f3b (iib-5/created-access-token-validation-middleware-custom-exceptions)
+=======
+            "sha256": "00cf21ab6dff2f51e7c07762f82e13daf4afa52ee77956d0618eaab27d1335a2"
+>>>>>>> a72ebf9 (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
         },
         "pipfile-spec": 6,
         "requires": {
@@ -30,6 +34,9 @@
             "version": "==3.6.0"
         },
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a72ebf9 (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
         "attrs": {
             "hashes": [
                 "sha256:29e95c7f6778868dbd49170f98f8818f78f3dc5e0e37c0b1f474e3561b240836",
@@ -38,8 +45,11 @@
             "markers": "python_version >= '3.6'",
             "version": "==22.2.0"
         },
+<<<<<<< HEAD
 =======
 >>>>>>> b114f3b (iib-5/created-access-token-validation-middleware-custom-exceptions)
+=======
+>>>>>>> a72ebf9 (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
         "cffi": {
             "hashes": [
                 "sha256:00a9ed42e88df81ffae7a8ab6d9356b371399b91dbdf0c3cb1e84c03a13aceb5",
@@ -135,6 +145,7 @@
                 "sha256:f964c7dcf7802d133e8dbd1565914fa0194f9d683d82411989889ecd701e8adf",
                 "sha256:fec8b932f51ae245121c4671b4bbc030880f363354b2f0e0bd1366017d891458"
             ],
+            "index": "pypi",
             "version": "==39.0.0"
         },
         "dj-database-url": {
@@ -160,6 +171,14 @@
             ],
             "index": "pypi",
             "version": "==3.13.0"
+        },
+        "django-csp": {
+            "hashes": [
+                "sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a",
+                "sha256:01eda02ad3f10261c74131cdc0b5a6a62b7c7ad4fd017fbefb7a14776e0a9727"
+            ],
+            "index": "pypi",
+            "version": "==3.7"
         },
         "djangorestframework": {
             "hashes": [

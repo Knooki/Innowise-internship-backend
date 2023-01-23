@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "corsheaders",
     # Local
     "accounts",
+    "authentication",
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    # 'csp.middleware.CSPMiddleware',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # Local
@@ -95,6 +97,15 @@ DATABASES = {
         "HOST": "db",
         "PORT": env.str("PORT"),
     }
+}
+
+REST_FRAMEWORK = {
+    # "DEFAULT_AUTHENTICATION_CLASSES": (
+    #     "authentication.authentication.SafeJWTAuthentication",
+    # ),
+        #  "DEFAULT_PERMISSION_CLASSES": [
+        #     "rest_framework.permissions.IsAuthenticated",
+        # ],
 }
 
 
@@ -140,20 +151,23 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:8000/']
+
 CORS_ORIGIN_WHITELIST = tuple(env.list("CORS_ALLOWED_ORIGINS"))
-CORS_ALLOW_CREDENTIALS = True # to accept cookies via ajax request
+CORS_ALLOW_CREDENTIALS = True  # to accept cookies via ajax request
 
 ACCESS_PUBLIC = bytes(env.str("ACCESS_TOKEN_PUBLIC_KEY"), "utf-8")
 ACCESS_PRIVATE = bytes(env.str("ACCESS_TOKEN_PRIVATE_KEY"), "utf-8")
 ACCESS_PHRASE = bytes(env.str("ACCESS_TOKEN_PASSPHRASE"), "utf-8")
-ACCESS_EXP = env.str("ACCESS_TOKEN_EXPIRES_IN")
+ACCESS_EXP_M = env.int("ACCESS_TOKEN_EXPIRES_IN_MINUTES")
 
 REFRESH_PUBLIC = bytes(env.str("REFRESH_TOKEN_PUBLIC_KEY"), "utf-8")
 REFRESH_PRIVATE = bytes(env.str("REFRESH_TOKEN_PRIVATE_KEY"), "utf-8")
 REFRESH_PHRASE = bytes(env.str("REFRESH_TOKEN_PASSPHRASE"), "utf-8")
-REFRESH_EXP = env.str("REFRESH_TOKEN_EXPIRES_IN")
+REFRESH_EXP_D = env.int("REFRESH_TOKEN_EXPIRES_IN_DAYS")
 
 JWT_UNAUTHENTICATED_URL_PATTERNS = env.list("JWT_UNAUTHENTICATED_URL_PATTERNS")
 REGEX_BEARER = env.str("REGEX_BEARER")
 
+INTERNAL_EXTRA_JWT_OPTIONS = env.dict("INTERNAL_EXTRA_JWT_OPTIONS")
 # serailizers в git stash
