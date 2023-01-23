@@ -18,11 +18,7 @@ from innotter.settings import (
 
 
 from accounts.serializers import UserSerializer
-from .utils import (
-    generate_jwt_token,
-    decode_refresh_token,
-    update_valid_refresh_tokens_to_invalid,
-)
+from .utils import generate_jwt_token, decode_refresh_token
 from .models import UserToken
 
 
