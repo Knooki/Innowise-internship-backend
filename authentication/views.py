@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 
 from innotter.settings import (
+    INTERNAL_EXTRA_JWT_OPTIONS,
     ACCESS_EXP_M,
     ACCESS_PRIVATE,
     ACCESS_PHRASE,
@@ -43,7 +44,12 @@ class AuthenticationView(viewsets.ViewSet):
         if not user.check_password(password):
             raise exceptions.AuthenticationFailed("wrong password")
 
-        update_valid_refresh_tokens_to_invalid(user.id)
+        # Update all tokens, that are valid to invalid
+        user_tokens = UserToken.objects.filter(user_id=user.id).filter(is_valid=True)
+        for object in user_tokens:
+            object.is_valid = False
+
+        UserToken.objects.bulk_update(user_tokens, ["is_valid"])
 
         access_token = generate_jwt_token(
             user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M

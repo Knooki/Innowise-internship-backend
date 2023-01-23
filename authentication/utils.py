@@ -58,4 +58,3 @@ def update_valid_refresh_tokens_to_invalid(user_id: int):
         object.is_valid = False
 
     UserToken.objects.bulk_update(user_tokens, ["is_valid"])
-
