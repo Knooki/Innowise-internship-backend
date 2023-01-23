@@ -27,16 +27,28 @@ def generate_jwt_token(user_id: int, priv_key, phrase, exp_days, exp_minutes) ->
     priv_key = serialization.load_pem_private_key(
         priv_key, phrase, backend=default_backend()
     )
+<<<<<<< HEAD
     jwt_token = jwt.encode(payload, priv_key, algorithm="RS256")
     if phrase == REFRESH_PHRASE:
         user_token = UserToken(
             user_id=user_id,
             refresh_token=jwt_token,
+=======
+    refresh_token = jwt.encode(payload, priv_key, algorithm="RS256")
+    if phrase == REFRESH_PHRASE:
+        user_token = UserToken(
+            user_id=user_id,
+            refresh_token=refresh_token,
+>>>>>>> 13bf44d (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
             expires_at=payload["exp"],
             created_at=payload["iat"],
         )
         user_token.save()
+<<<<<<< HEAD
     return jwt_token
+=======
+    return refresh_token
+>>>>>>> 13bf44d (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
 
 
 def decode_refresh_token(refresh_token: str) -> dict:
@@ -50,6 +62,7 @@ def decode_refresh_token(refresh_token: str) -> dict:
         raise RefreshTokenExpired
     except (jwt.DecodeError, jwt.InvalidTokenError):
         raise InvalidRefreshToken
+<<<<<<< HEAD
     
 def update_valid_refresh_tokens_to_invalid(user_id: int):
     # Update all tokens, that are valid to invalid
@@ -59,3 +72,5 @@ def update_valid_refresh_tokens_to_invalid(user_id: int):
 
     UserToken.objects.bulk_update(user_tokens, ["is_valid"])
 
+=======
+>>>>>>> 13bf44d (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
