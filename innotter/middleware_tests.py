@@ -13,7 +13,7 @@ from .jwt_token_exceptions import (
 
 from rest_framework.test import APIClient
 
-from .settings import ACCESS_PHRASE, ACCESS_PRIVATE
+from .settings import ACCESS_PHRASE, ACCESS_PRIVATE 
 
 
 @pytest.fixture
