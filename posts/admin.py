@@ -5,9 +5,7 @@ from .models import Tag, Page, Post
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
-    list_display = (
-        "name",
-    )
+    list_display = ("name",)
 
 
 class PageAdmin(admin.ModelAdmin):
@@ -23,9 +21,7 @@ class PageAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    readonly_fields = (
-        "created_at",
-    )
+    readonly_fields = ("created_at",)
     model = Post
     list_display = (
         "title",
