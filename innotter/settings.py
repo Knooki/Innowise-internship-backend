@@ -103,9 +103,9 @@ REST_FRAMEWORK = {
     # "DEFAULT_AUTHENTICATION_CLASSES": (
     #     "authentication.authentication.SafeJWTAuthentication",
     # ),
-        #  "DEFAULT_PERMISSION_CLASSES": [
-        #     "rest_framework.permissions.IsAuthenticated",
-        # ],
+    #  "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.IsAuthenticated",
+    # ],
 }
 
 
@@ -151,14 +151,14 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:8000/']
+CSRF_TRUSTED_ORIGINS = ["http://0.0.0.0:8000/"]
 
 CORS_ORIGIN_WHITELIST = tuple(env.list("CORS_ALLOWED_ORIGINS"))
 CORS_ALLOW_CREDENTIALS = True  # to accept cookies via ajax request
 
 ACCESS_PUBLIC = bytes(env.str("ACCESS_TOKEN_PUBLIC_KEY"), "utf-8")
-ACCESS_PRIVATE = bytes(env.str("ACCESS_TOKEN_PRIVATE_KEY"), "utf-8")
-ACCESS_PHRASE = bytes(env.str("ACCESS_TOKEN_PASSPHRASE"), "utf-8")
+REFRESH_PRIVATE = bytes(env.str("ACCESS_TOKEN_PRIVATE_KEY"), "utf-8")
+REFRESH_PHRASE = bytes(env.str("ACCESS_TOKEN_PASSPHRASE"), "utf-8")
 ACCESS_EXP_M = env.int("ACCESS_TOKEN_EXPIRES_IN_MINUTES")
 
 REFRESH_PUBLIC = bytes(env.str("REFRESH_TOKEN_PUBLIC_KEY"), "utf-8")

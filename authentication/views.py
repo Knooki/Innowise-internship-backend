@@ -8,8 +8,8 @@ from django.contrib.auth import get_user_model
 
 from innotter.settings import (
     ACCESS_EXP_M,
-    ACCESS_PRIVATE,
-    ACCESS_PHRASE,
+    REFRESH_PRIVATE,
+    REFRESH_PHRASE,
     REFRESH_PRIVATE,
     REFRESH_PHRASE,
     REFRESH_EXP_D,
@@ -46,7 +46,7 @@ class AuthenticationView(viewsets.ViewSet):
         update_valid_refresh_tokens_to_invalid(user.id)
 
         access_token = generate_jwt_token(
-            user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M
+            user.id, REFRESH_PRIVATE, REFRESH_PHRASE, 0, ACCESS_EXP_M
         )
         refresh_token = generate_jwt_token(
             user.id, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0
@@ -70,13 +70,14 @@ class AuthenticationView(viewsets.ViewSet):
             )
 
         # If refresh_token doesn't exist in database
-        user_token = UserToken.objects.filter(refresh_token=refresh_token).get()
+        user_token = UserToken.objects.filter(refresh_token=refresh_token)
         if not user_token:
             UserToken.objects.filter(user_id=payload["user_id"]).delete()
             raise exceptions.AuthenticationFailed(
                 "The Refresh Token is invalid. Please sign in again."
             )
 
+        user_token = user_token.first()
         # If refresh_token is old
         if not user_token.is_valid:
             UserToken.objects.filter(user_id=payload["user_id"]).delete()
@@ -88,7 +89,7 @@ class AuthenticationView(viewsets.ViewSet):
         user_token.save()
 
         access_token = generate_jwt_token(
-            user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M
+            user.id, REFRESH_PRIVATE, REFRESH_PHRASE, 0, ACCESS_EXP_M
         )
         refresh_token = generate_jwt_token(
             user.id, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0
