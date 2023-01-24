@@ -4,7 +4,7 @@ from .models import Tag, Page, Post
 
 
 class TagTestCase(TestCase):
-    fixtures = ['fixtures.json']
+    fixtures = ["fixtures.json"]
 
     def test_tag_returns_str(self):
         test_tag = Tag.objects.get(pk=1)
@@ -12,7 +12,7 @@ class TagTestCase(TestCase):
 
 
 class PageTestCase(TestCase):
-    fixtures = ['fixtures.json']
+    fixtures = ["fixtures.json"]
 
     def test_page_returns_str(self):
         test_page = Page.objects.get(pk=1)
@@ -20,7 +20,7 @@ class PageTestCase(TestCase):
 
 
 class PostTestCase(TestCase):
-    fixtures = ['fixtures.json']
+    fixtures = ["fixtures.json"]
 
     def test_post_returns_str(self):
         test_post = Post.objects.get(pk=1)
