@@ -1,4 +1,3 @@
-import jwt
 import datetime
 
 from rest_framework.response import Response
@@ -8,7 +7,6 @@ from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 
 from innotter.settings import (
-    INTERNAL_EXTRA_JWT_OPTIONS,
     ACCESS_EXP_M,
     ACCESS_PRIVATE,
     ACCESS_PHRASE,
@@ -19,7 +17,11 @@ from innotter.settings import (
 
 
 from accounts.serializers import UserSerializer
-from .utils import generate_jwt_token, decode_refresh_token
+from .utils import (
+    generate_jwt_token,
+    decode_refresh_token,
+    update_valid_refresh_tokens_to_invalid,
+)
 from .models import UserToken
 
 
@@ -41,12 +43,7 @@ class AuthenticationView(viewsets.ViewSet):
         if not user.check_password(password):
             raise exceptions.AuthenticationFailed("wrong password")
 
-        # Update all tokens, that are valid to invalid
-        user_tokens = UserToken.objects.filter(user_id=user.id).filter(is_valid=True)
-        for object in user_tokens:
-            object.is_valid = False
-
-        UserToken.objects.bulk_update(user_tokens, ["is_valid"])
+        update_valid_refresh_tokens_to_invalid(user.id)
 
         access_token = generate_jwt_token(
             user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M
@@ -55,7 +52,7 @@ class AuthenticationView(viewsets.ViewSet):
             user.id, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0
         )
 
-        return self.create_response(user, refresh_token, access_token)
+        return self.create_auth_response(user, refresh_token, access_token)
 
     @action(detail=False, methods=["GET"], name="refresh")
     def refresh(self, request) -> Response:
@@ -79,7 +76,7 @@ class AuthenticationView(viewsets.ViewSet):
             raise exceptions.AuthenticationFailed(
                 "The Refresh Token is invalid. Please sign in again."
             )
-            
+
         # If refresh_token is old
         if not user_token.is_valid:
             UserToken.objects.filter(user_id=payload["user_id"]).delete()
@@ -97,9 +94,9 @@ class AuthenticationView(viewsets.ViewSet):
             user.id, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0
         )
 
-        return self.create_response(user, refresh_token, access_token)
+        return self.create_auth_response(user, refresh_token, access_token)
 
-    def create_response(self, user, refresh_token, access_token):
+    def create_auth_response(self, user, refresh_token, access_token):
         response = Response()
         serialized_user = UserSerializer(user).data
 
