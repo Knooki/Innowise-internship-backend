@@ -27,16 +27,16 @@ def generate_jwt_token(user_id: int, priv_key, phrase, exp_days, exp_minutes) ->
     priv_key = serialization.load_pem_private_key(
         priv_key, phrase, backend=default_backend()
     )
-    refresh_token = jwt.encode(payload, priv_key, algorithm="RS256")
+    jwt_token = jwt.encode(payload, priv_key, algorithm="RS256")
     if phrase == REFRESH_PHRASE:
         user_token = UserToken(
             user_id=user_id,
-            refresh_token=refresh_token,
+            refresh_token=jwt_token,
             expires_at=payload["exp"],
             created_at=payload["iat"],
         )
         user_token.save()
-    return refresh_token
+    return jwt_token
 
 
 def decode_refresh_token(refresh_token: str) -> dict:
