@@ -1,7 +1,9 @@
 import pytest
 import jwt
 
-from .utils import generate_jwt_token, decode_refresh_token
+from .utils import generate_jwt_token
+
+from .models import UserToken
 
 from innotter.settings import (
     ACCESS_PUBLIC,
@@ -28,7 +30,18 @@ class TestAccessToken:
         refresh_token = generate_jwt_token(
             1, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0
         )
+        
         payload = jwt.decode(refresh_token, REFRESH_PUBLIC, algorithms=["RS256"])
+        
         assert payload["user_id"] == 1
+        
+    @pytest.mark.django_db
+    def test_generation_of_refresh_token_saves_new_UserToken_object(self):
+        refresh_token = generate_jwt_token(
+            1, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0
+        )
+        user_token = UserToken.objects.filter(refresh_token=refresh_token).get()
+        assert user_token and user_token.is_valid ==True
+        
 
     
