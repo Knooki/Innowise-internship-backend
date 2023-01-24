@@ -8,8 +8,8 @@ from .models import UserToken
 
 from innotter.settings import (
     ACCESS_PUBLIC,
-    ACCESS_PRIVATE,
-    ACCESS_PHRASE,
+    REFRESH_PRIVATE,
+    REFRESH_PHRASE,
     ACCESS_EXP_M,
     REFRESH_PUBLIC,
     REFRESH_PRIVATE,
@@ -21,7 +21,7 @@ from innotter.settings import (
 class TestAccessToken:
     def test_generation_of_access_token(self):
         access_token = generate_jwt_token(
-            1, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M
+            1, REFRESH_PRIVATE, REFRESH_PHRASE, 0, ACCESS_EXP_M
         )
         payload = jwt.decode(access_token, ACCESS_PUBLIC, algorithms=["RS256"])
         assert payload["user_id"] == 1
