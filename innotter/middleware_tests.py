@@ -82,5 +82,4 @@ def test_middleware_raises_NoKeywordInAuthorization(client):
 def test_middleware_raises_InvalidAccessToken(client):
     client.credentials(HTTP_AUTHORIZATION="Bearer " + "Invalid Token")
     with pytest.raises(InvalidAccessToken) as e_info:
-        client.get("/api/v1/accounts/", {}, format="json")
-    
+        client.get("/api/v1/accounts/", {}, format="json")  
