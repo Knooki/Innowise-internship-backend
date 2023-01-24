@@ -9,8 +9,8 @@ from django.contrib.auth import get_user_model
 from innotter.settings import (
     INTERNAL_EXTRA_JWT_OPTIONS,
     ACCESS_EXP_M,
-    REFRESH_PRIVATE,
-    REFRESH_PHRASE,
+    ACCESS_PRIVATE,
+    ACCESS_PHRASE,
     REFRESH_PRIVATE,
     REFRESH_PHRASE,
     REFRESH_EXP_D,
@@ -48,7 +48,7 @@ class AuthenticationView(viewsets.ViewSet):
         UserToken.objects.bulk_update(user_tokens, ["is_valid"])
 
         access_token = generate_jwt_token(
-            user.id, REFRESH_PRIVATE, REFRESH_PHRASE, 0, ACCESS_EXP_M
+            user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M
         )
         refresh_token = generate_jwt_token(
             user.id, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0
@@ -91,7 +91,7 @@ class AuthenticationView(viewsets.ViewSet):
         user_token.save()
 
         access_token = generate_jwt_token(
-            user.id, REFRESH_PRIVATE, REFRESH_PHRASE, 0, ACCESS_EXP_M
+            user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M
         )
         refresh_token = generate_jwt_token(
             user.id, REFRESH_PRIVATE, REFRESH_PHRASE, REFRESH_EXP_D, 0

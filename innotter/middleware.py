@@ -37,6 +37,7 @@ class JWTMiddleware(MiddlewareMixin):
             raise BearerKeywordNotFound
         try:
             access_token = authorization_header_value.split(" ")[-1]
+            print(access_token)
             payload = jwt.decode(access_token, ACCESS_PUBLIC, algorithms=["RS256"])
             return None
         except jwt.ExpiredSignatureError:

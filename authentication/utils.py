@@ -50,7 +50,8 @@ def decode_refresh_token(refresh_token: str) -> dict:
         raise RefreshTokenExpired
     except (jwt.DecodeError, jwt.InvalidTokenError):
         raise InvalidRefreshToken
-    
+
+
 def update_valid_refresh_tokens_to_invalid(user_id: int):
     # Update all tokens, that are valid to invalid
     user_tokens = UserToken.objects.filter(user_id=user_id).filter(is_valid=True)
@@ -58,4 +59,3 @@ def update_valid_refresh_tokens_to_invalid(user_id: int):
         object.is_valid = False
 
     UserToken.objects.bulk_update(user_tokens, ["is_valid"])
-

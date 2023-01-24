@@ -18,10 +18,12 @@ from django.urls import path, include
 
 from accounts import urls as accounts_urls
 from authentication import urls as auth_urls
+from posts import urls as posts_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     # path("api-auth/", include("rest_framework.urls")),
     path("api/v1/accounts/", include(accounts_urls)),
     path("api/v1/auth/", include(auth_urls)),
+    path("api/v1/", include(posts_urls)),
 ]
