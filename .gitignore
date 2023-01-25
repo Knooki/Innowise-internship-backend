@@ -17,4 +17,10 @@ db.sqlite3
 # rsa keys
 /rsa_keys
 
+# test
 fixtures.json
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover

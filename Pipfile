@@ -14,6 +14,7 @@ pyjwt = {extras = ["crypto"], version = "*"}
 cryptography = "*"
 pytest-django = "*"
 django-csp = "*"
+coverage = "*"
 
 [dev-packages]
 
