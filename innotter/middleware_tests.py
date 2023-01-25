@@ -12,8 +12,11 @@ from .jwt_token_exceptions import (
 )
 
 from rest_framework.test import APIClient
+from django.http import JsonResponse
 
-from .settings import ACCESS_PHRASE, ACCESS_PRIVATE 
+from innotter.utils import create_exception_response
+
+from .settings import ACCESS_PHRASE, ACCESS_PRIVATE
 
 
 @pytest.fixture
@@ -63,23 +66,32 @@ def test_middleware_skips_valid_token(valid_access_token_fixture, client):
 
 def test_middleware_raises_AccessTokenExpired(expired_access_token_fixture, client):
     client.credentials(HTTP_AUTHORIZATION="Bearer " + expired_access_token_fixture)
-    with pytest.raises(AccessTokenExpired) as e_info:
-        client.get("/api/v1/accounts/", {}, format="json")
+    response = client.get("/api/v1/accounts/", {}, format="json")
+    result_resp = create_exception_response(AccessTokenExpired)
+    assert response.content == result_resp.content
+    assert response.status_code == result_resp.status_code
 
 
 def test_middleware_raises_AccessTokenNotFound(client):
     client.credentials()
-    with pytest.raises(AccessTokenNotFound) as e_info:
-        client.get("/api/v1/accounts/", {}, format="json")
+    response = client.get("/api/v1/accounts/", {}, format="json")
+    result_resp = create_exception_response(AccessTokenNotFound )
+
+    assert response.content == result_resp.content
+    assert response.status_code == result_resp.status_code
 
 
 def test_middleware_raises_NoKeywordInAuthorization(client):
     client.credentials(HTTP_AUTHORIZATION="Token")
-    with pytest.raises(BearerKeywordNotFound) as e_info:
-        client.get("/api/v1/accounts/", {}, format="json")
+    response = client.get("/api/v1/accounts/", {}, format="json")
+    result_resp = create_exception_response(BearerKeywordNotFound)
+    assert response.content == result_resp.content
+    assert response.status_code == result_resp.status_code
 
 
 def test_middleware_raises_InvalidAccessToken(client):
     client.credentials(HTTP_AUTHORIZATION="Bearer " + "Invalid Token")
-    with pytest.raises(InvalidAccessToken) as e_info:
-        client.get("/api/v1/accounts/", {}, format="json")  
+    response = client.get("/api/v1/accounts/", {}, format="json")
+    result_resp = create_exception_response(InvalidAccessToken)
+    assert response.content == result_resp.content
+    assert response.status_code == result_resp.status_code

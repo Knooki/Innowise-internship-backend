@@ -2,6 +2,7 @@ import jwt
 import re
 
 from django.utils.deprecation import MiddlewareMixin
+from innotter.utils import create_exception_response
 
 from .jwt_token_exceptions import (
     AccessTokenExpired,
@@ -31,15 +32,15 @@ class JWTMiddleware(MiddlewareMixin):
         authorization_header_value = request.headers.get("Authorization")
 
         if not authorization_header_value:
-            raise AccessTokenNotFound
+            return create_exception_response(AccessTokenNotFound)
 
         if not re.fullmatch(REGEX_BEARER, authorization_header_value):
-            raise BearerKeywordNotFound
+            return create_exception_response(BearerKeywordNotFound)
         try:
             access_token = authorization_header_value.split(" ")[-1]
             payload = jwt.decode(access_token, ACCESS_PUBLIC, algorithms=["RS256"])
             return None
         except jwt.ExpiredSignatureError:
-            raise AccessTokenExpired
+            return create_exception_response(AccessTokenExpired)
         except (jwt.DecodeError, jwt.InvalidTokenError):
-            raise InvalidAccessToken
+            return create_exception_response(InvalidAccessToken)
