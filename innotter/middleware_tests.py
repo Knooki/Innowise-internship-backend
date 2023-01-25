@@ -4,11 +4,11 @@ import datetime
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
-from .access_token_exceptions import (
+from .jwt_token_exceptions import (
     AccessTokenExpired,
     AccessTokenNotFound,
     InvalidAccessToken,
-    NoKeywordInAuthorization,
+    BearerKeywordNotFound,
 )
 
 from rest_framework.test import APIClient
@@ -50,10 +50,12 @@ def expired_access_token_fixture():
     return access_token
 
 
+@pytest.mark.django_db
 def test_middleware_skips_unauthenticated_urls(client):
     client.get("/api/v1/auth/refresh", {}, format="json")
 
 
+@pytest.mark.django_db
 def test_middleware_skips_valid_token(valid_access_token_fixture, client):
     client.credentials(HTTP_AUTHORIZATION="Bearer " + valid_access_token_fixture)
     client.get("/api/v1/accounts/", {}, format="json")
@@ -73,7 +75,7 @@ def test_middleware_raises_AccessTokenNotFound(client):
 
 def test_middleware_raises_NoKeywordInAuthorization(client):
     client.credentials(HTTP_AUTHORIZATION="Token")
-    with pytest.raises(NoKeywordInAuthorization) as e_info:
+    with pytest.raises(BearerKeywordNotFound) as e_info:
         client.get("/api/v1/accounts/", {}, format="json")
 
 
