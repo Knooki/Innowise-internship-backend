@@ -103,15 +103,9 @@ REST_FRAMEWORK = {
     # "DEFAULT_AUTHENTICATION_CLASSES": (
     #     "authentication.authentication.SafeJWTAuthentication",
     # ),
-<<<<<<< HEAD
     #  "DEFAULT_PERMISSION_CLASSES": [
     #     "rest_framework.permissions.IsAuthenticated",
     # ],
-=======
-        #  "DEFAULT_PERMISSION_CLASSES": [
-        #     "rest_framework.permissions.IsAuthenticated",
-        # ],
->>>>>>> 13bf44d (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
 }
 
 
@@ -157,11 +151,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-<<<<<<< HEAD
 CSRF_TRUSTED_ORIGINS = ["http://0.0.0.0:8000/"]
-=======
-CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:8000/']
->>>>>>> 13bf44d (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
 
 CORS_ORIGIN_WHITELIST = tuple(env.list("CORS_ALLOWED_ORIGINS"))
 CORS_ALLOW_CREDENTIALS = True  # to accept cookies via ajax request

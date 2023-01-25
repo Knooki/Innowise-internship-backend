@@ -1,6 +1,5 @@
 from django.test import TestCase
 
-<<<<<<< HEAD
 from django.contrib.auth import get_user_model
 
 from rest_framework.test import APIClient, APIRequestFactory
@@ -140,5 +139,3 @@ class AuthenticationRefreshViewTestCase(TestCase):
             is_valid=is_valid,
         )
         user_token.save()
-=======
->>>>>>> 13bf44d (iib-4/added-cryptograpy-pytest-django-django-csp-packages-refactored-settings.py)
