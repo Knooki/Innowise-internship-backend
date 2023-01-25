@@ -76,16 +76,14 @@ class AuthenticationView(viewsets.ViewSet):
             )
 
         # If refresh_token doesn't exist in database
-
         user_token = UserToken.objects.filter(refresh_token=refresh_token)
-
         if not user_token:
             UserToken.objects.filter(user_id=payload["user_id"]).delete()
             raise exceptions.AuthenticationFailed(
                 "The Refresh Token is invalid. Please sign in again."
             )
+
         user_token = user_token.first()
-        
         # If refresh_token is old
         if not user_token.is_valid:
             UserToken.objects.filter(user_id=payload["user_id"]).delete()
