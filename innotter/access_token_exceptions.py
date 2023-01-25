@@ -20,7 +20,6 @@ class AccessTokenNotFound(APIException):
     default_detail = "Access Token not found. Please put it in Authorization header."
     default_code = "Access Token not found"
 
-
 class NoKeywordInAuthorization(APIException):
     status_code = 400
     default_detail = "Authorization header must start with Bearer followed by its token"

@@ -14,6 +14,10 @@ class User(AbstractUser):
 
     title = models.CharField(max_length=80)
     is_blocked = models.BooleanField(default=False)
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> d4b9f57 (iib-5/created-access-token-validation-middleware-custom-exceptions)
     def __str__(self) -> str:
         return self.username
