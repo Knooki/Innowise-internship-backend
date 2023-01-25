@@ -14,6 +14,6 @@ class User(AbstractUser):
 
     title = models.CharField(max_length=80)
     is_blocked = models.BooleanField(default=False)
-
+    
     def __str__(self) -> str:
         return self.username
