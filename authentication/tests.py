@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from django.contrib.auth import get_user_model
+from accounts.models import User
 
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework import exceptions
@@ -18,7 +18,6 @@ from .models import UserToken
 
 class AuthenticationLoginViewTestCase(TestCase):
     def setUp(self):
-        User = get_user_model()
         self.user = User.objects.create_user(
             username="test_user", password="test_password", email="test@gmail.com"
         )
@@ -61,7 +60,6 @@ class AuthenticationLoginViewTestCase(TestCase):
 
 class AuthenticationRefreshViewTestCase(TestCase):
     def setUp(self):
-        User = get_user_model()
         self.user = User.objects.create_user(
             username="test_user", password="test_password", email="test@gmail.com"
         )

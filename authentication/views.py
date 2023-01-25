@@ -1,10 +1,8 @@
-import datetime
-
 from rest_framework.response import Response
 from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
 
-from django.contrib.auth import get_user_model
+from accounts.models import User
 
 from innotter.settings import (
     ACCESS_EXP_M,
@@ -19,17 +17,16 @@ from innotter.settings import (
 from accounts.serializers import UserSerializer
 from .utils import (
     generate_jwt_token,
-    decode_refresh_token,
     update_valid_refresh_tokens_to_invalid,
 )
-from .models import UserToken
+
+from .services import JwtTokenValidation
 
 
 class AuthenticationView(viewsets.ViewSet):
     @action(detail=False, methods=["POST"], name="login")
     def login(self, request) -> Response:
 
-        User = get_user_model()
         username = request.data.get("username")
         password = request.data.get("password")
 
@@ -56,37 +53,9 @@ class AuthenticationView(viewsets.ViewSet):
 
     @action(detail=False, methods=["GET"], name="refresh")
     def refresh(self, request) -> Response:
-        User = get_user_model()
-
         refresh_token = request.COOKIES.get("refreshtoken")
 
-        payload = decode_refresh_token(refresh_token)
-
-        # If user doesn't exist in database
-        user = User.objects.filter(id=payload["user_id"]).first()
-        if user is None:
-            raise exceptions.AuthenticationFailed(
-                "User in refresh key not found. Please sign in again."
-            )
-
-        # If refresh_token doesn't exist in database
-        user_token = UserToken.objects.filter(refresh_token=refresh_token)
-        if not user_token:
-            UserToken.objects.filter(user_id=payload["user_id"]).delete()
-            raise exceptions.AuthenticationFailed(
-                "The Refresh Token is invalid. Please sign in again."
-            )
-
-        user_token = user_token.first()
-        # If refresh_token is old
-        if not user_token.is_valid:
-            UserToken.objects.filter(user_id=payload["user_id"]).delete()
-            raise exceptions.AuthenticationFailed(
-                "The refresh token is invalid, all refresh tokens of this user are deleted. Sign in again."
-            )
-
-        user_token.is_valid = False
-        user_token.save()
+        user = JwtTokenValidation(refresh_token).validate_refresh_token()
 
         access_token = generate_jwt_token(
             user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M

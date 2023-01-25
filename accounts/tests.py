@@ -27,7 +27,7 @@ class RegistrationViewTestCase(TestCase):
             "first_name": ["This field is required."],
             "last_name": ["This field is required."],
             "password": ["This field is required."],
-            "password2": ["This field is required."],
+            "password_again": ["This field is required."],
         }
 
     def test_registration_creates_user(self):
@@ -37,7 +37,7 @@ class RegistrationViewTestCase(TestCase):
             "first_name": "test_name",
             "last_name": "test_surname",
             "password": "test_passoword",
-            "password2": "test_passoword",
+            "password_again": "test_passoword",
         }
 
         response = self.client.post(
@@ -59,7 +59,7 @@ class RegistrationViewTestCase(TestCase):
             "first_name": "test_name",
             "last_name": "test_surname",
             "password": "test_passoword",
-            "password2": "test_passoword",
+            "password_again": "test_passoword",
         }
         response = self.client.post(
             "/api/v1/accounts/registration/",
@@ -78,7 +78,7 @@ class RegistrationViewTestCase(TestCase):
             "first_name": "test_name",
             "last_name": "test_surname",
             "password": "test_passoword1",
-            "password2": "test_passoword",
+            "password_again": "test_passoword",
         }
         response = self.client.post(
             "/api/v1/accounts/registration/",

@@ -18,7 +18,7 @@ from innotter.settings import (
 )
 
 
-class TestAccessToken:
+class TestJwtToken:
     def test_generation_of_access_token(self):
         access_token = generate_jwt_token(
             1, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M

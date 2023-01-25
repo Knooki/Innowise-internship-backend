@@ -3,17 +3,11 @@ import jwt
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
+
 from .models import UserToken
 
 from innotter.settings import (
-    REFRESH_PUBLIC,
     REFRESH_PHRASE,
-)
-
-from innotter.jwt_token_exceptions import (
-    RefreshTokenExpired,
-    RefreshTokenNotFound,
-    InvalidRefreshToken,
 )
 
 
@@ -39,18 +33,6 @@ def generate_jwt_token(user_id: int, priv_key, phrase, exp_days, exp_minutes) ->
     return jwt_token
 
 
-def decode_refresh_token(refresh_token: str) -> dict:
-    if not refresh_token:
-        raise RefreshTokenNotFound
-
-    try:
-        payload = jwt.decode(refresh_token, REFRESH_PUBLIC, algorithms=["RS256"])
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise RefreshTokenExpired
-    except (jwt.DecodeError, jwt.InvalidTokenError):
-        raise InvalidRefreshToken
-    
 def update_valid_refresh_tokens_to_invalid(user_id: int):
     # Update all tokens, that are valid to invalid
     user_tokens = UserToken.objects.filter(user_id=user_id).filter(is_valid=True)
@@ -58,4 +40,3 @@ def update_valid_refresh_tokens_to_invalid(user_id: int):
         object.is_valid = False
 
     UserToken.objects.bulk_update(user_tokens, ["is_valid"])
-
