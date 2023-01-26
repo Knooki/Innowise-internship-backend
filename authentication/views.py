@@ -15,13 +15,10 @@ from innotter.settings import (
 
 
 from accounts.serializers import UserSerializer
-from .utils import (
-    generate_jwt_token,
-    update_valid_refresh_tokens_to_invalid,
-)
+
+from .utils import generate_jwt_token
 
 from .services import JwtTokenValidation
-
 
 class AuthenticationView(viewsets.ViewSet):
     @action(detail=False, methods=["POST"], name="login")
@@ -39,8 +36,6 @@ class AuthenticationView(viewsets.ViewSet):
 
         if not user.check_password(password):
             raise exceptions.AuthenticationFailed("wrong password")
-
-        update_valid_refresh_tokens_to_invalid(user.id)
 
         access_token = generate_jwt_token(
             user.id, ACCESS_PRIVATE, ACCESS_PHRASE, 0, ACCESS_EXP_M

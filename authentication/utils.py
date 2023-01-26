@@ -23,6 +23,7 @@ def generate_jwt_token(user_id: int, priv_key, phrase, exp_days, exp_minutes) ->
     )
     jwt_token = jwt.encode(payload, priv_key, algorithm="RS256")
     if phrase == REFRESH_PHRASE:
+        update_valid_refresh_tokens_to_invalid(user_id)
         user_token = UserToken(
             user_id=user_id,
             refresh_token=jwt_token,

@@ -79,7 +79,7 @@ class AuthenticationRefreshViewTestCase(TestCase):
         return request
 
     def test_refresh_raises_user_not_found(self):
-        request = self.create_request(-3)
+        request = self.create_request(user_id=-3)
         with self.assertRaisesRegex(
             exceptions.AuthenticationFailed,
             "User in refresh key not found. Please sign in again.",
@@ -127,7 +127,7 @@ class AuthenticationRefreshViewTestCase(TestCase):
     def update_user_token_table(
         self, user_id, refresh_token, payload, invalid_ref_tok=None, is_valid=False
     ):
-        u_t_refresh_token = refresh_token if not invalid_ref_tok else invalid_ref_tok
+        u_t_refresh_token = invalid_ref_tok or refresh_token
         UserToken.objects.all().delete()
         user_token = UserToken(
             user_id=user_id,
