@@ -77,18 +77,8 @@ class PasswordResetUserSerializer(serializers.ModelSerializer):
             "new_password",
         ]
         extra_kwargs = {
-            "password": {"write_only": True, "required": True},
-            "new_password": {"write_only": True, "required": True},
+            "new_password": {"required": True},
         }
-
-    def __init__(self, user, *args, **kwargs):
-
-        super(PasswordResetUserSerializer, self).__init__(*args, **kwargs)
-        self.user = user
-
-    # def validate_password(self, value):
-
-    #     return value
 
     def update(self, instance, validated_data):
         user = instance
@@ -102,7 +92,6 @@ class PasswordResetUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"password": "You enetered wrong password"}
             )
-
         user.set_password(new_password)
         user.save()
         return user

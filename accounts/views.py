@@ -22,7 +22,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def registration(self, request) -> Response:
         serializer = UserRegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        self.perform_update(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
@@ -33,13 +33,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         access_token = request.headers.get("Authorization").split(" ")[-1]
         user = JwtTokenValidation(access_token).validate_access_token()
-        serializer = PasswordResetUserSerializer(
-            user=user, data=request.data, partial=True
-        )
+        serializer = PasswordResetUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.update(user, serializer.validated_data)
-        headers = self.get_success_headers(serializer.data)
-        print(serializer.data)
-        return Response(
-            data=serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(status=status.HTTP_201_CREATED)
