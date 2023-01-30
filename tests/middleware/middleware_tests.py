@@ -4,7 +4,7 @@ import datetime
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
-from .jwt_token_exceptions import (
+from exceptions.jwt_token_exceptions import (
     AccessTokenExpired,
     AccessTokenNotFound,
     InvalidAccessToken,
@@ -12,11 +12,10 @@ from .jwt_token_exceptions import (
 )
 
 from rest_framework.test import APIClient
-from django.http import JsonResponse
 
-from innotter.utils import create_exception_response
+from exceptions.utils import create_exception_response
 
-from .settings import ACCESS_PHRASE, ACCESS_PRIVATE
+from django.conf import settings
 
 
 @pytest.fixture
@@ -33,7 +32,9 @@ def valid_access_token_fixture():
         "iat": datetime.datetime.utcnow(),
     }
     priv_key = serialization.load_pem_private_key(
-        ACCESS_PRIVATE, ACCESS_PHRASE, backend=default_backend()
+        settings.ACCESS_PRIVATE_KEY,
+        settings.ACCESS_PASSPHRASE,
+        backend=default_backend(),
     )
     access_token = jwt.encode(payload, priv_key, algorithm="RS256")
     return access_token
@@ -47,7 +48,9 @@ def expired_access_token_fixture():
         "iat": datetime.datetime.utcnow(),
     }
     priv_key = serialization.load_pem_private_key(
-        ACCESS_PRIVATE, ACCESS_PHRASE, backend=default_backend()
+        settings.ACCESS_PRIVATE_KEY,
+        settings.ACCESS_PASSPHRASE,
+        backend=default_backend(),
     )
     access_token = jwt.encode(payload, priv_key, algorithm="RS256")
     return access_token
@@ -75,7 +78,7 @@ def test_middleware_raises_AccessTokenExpired(expired_access_token_fixture, clie
 def test_middleware_raises_AccessTokenNotFound(client):
     client.credentials()
     response = client.get("/api/v1/accounts/", {}, format="json")
-    result_resp = create_exception_response(AccessTokenNotFound )
+    result_resp = create_exception_response(AccessTokenNotFound)
 
     assert response.content == result_resp.content
     assert response.status_code == result_resp.status_code

@@ -2,9 +2,9 @@ import jwt
 import re
 
 from django.utils.deprecation import MiddlewareMixin
-from innotter.utils import create_exception_response
+from exceptions.utils import create_exception_response
 
-from .jwt_token_exceptions import (
+from exceptions.jwt_token_exceptions import (
     AccessTokenExpired,
     InvalidAccessToken,
     AccessTokenNotFound,
@@ -12,7 +12,7 @@ from .jwt_token_exceptions import (
 )
 
 from innotter.settings import (
-    ACCESS_PUBLIC,
+    ACCESS_PUBLIC_KEY,
     JWT_UNAUTHENTICATED_URL_PATTERNS,
     REGEX_BEARER,
 )
@@ -38,7 +38,7 @@ class JWTMiddleware(MiddlewareMixin):
             return create_exception_response(BearerKeywordNotFound)
         try:
             access_token = authorization_header_value.split(" ")[-1]
-            payload = jwt.decode(access_token, ACCESS_PUBLIC, algorithms=["RS256"])
+            payload = jwt.decode(access_token, ACCESS_PUBLIC_KEY, algorithms=["RS256"])
             return None
         except jwt.ExpiredSignatureError:
             return create_exception_response(AccessTokenExpired)
