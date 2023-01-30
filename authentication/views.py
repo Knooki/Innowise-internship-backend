@@ -27,7 +27,6 @@ class AuthenticationView(viewsets.ViewSet):
     @action(detail=False, methods=["PATCH"], name="password_reset")
     def password_reset(self, request) -> Response:
         # there will be email service
-
         # user = AccessTokenService(request=request).validate_and_return_user()
         # serializer = PasswordResetSerializer(data=request.data, user=user)
         # serializer.is_valid(raise_exception=True)
