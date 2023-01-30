@@ -11,7 +11,10 @@ environs = "*"
 dj-database-url = "*"
 django-cors-headers = "*"
 pyjwt = {extras = ["crypto"], version = "*"}
+cryptography = "*"
 pytest-django = "*"
+django-csp = "*"
+coverage = "*"
 
 [dev-packages]
 
