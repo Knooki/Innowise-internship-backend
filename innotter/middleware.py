@@ -11,11 +11,7 @@ from exceptions.jwt_token_exceptions import (
     BearerKeywordNotFound,
 )
 
-from innotter.settings import (
-    ACCESS_PUBLIC_KEY,
-    JWT_UNAUTHENTICATED_URL_PATTERNS,
-    REGEX_BEARER,
-)
+from django.conf import settings
 
 
 class JWTMiddleware(MiddlewareMixin):
@@ -24,7 +20,7 @@ class JWTMiddleware(MiddlewareMixin):
         # now it is ["/", "/admin/.+"]
         if any(
             re.fullmatch(pattern, request.path)
-            for pattern in JWT_UNAUTHENTICATED_URL_PATTERNS
+            for pattern in settings.JWT_UNAUTHENTICATED_URL_PATTERNS
         ):
             return None
 
@@ -34,11 +30,11 @@ class JWTMiddleware(MiddlewareMixin):
         if not authorization_header_value:
             return create_exception_response(AccessTokenNotFound)
 
-        if not re.fullmatch(REGEX_BEARER, authorization_header_value):
+        if not re.fullmatch(settings.REGEX_BEARER, authorization_header_value):
             return create_exception_response(BearerKeywordNotFound)
         try:
             access_token = authorization_header_value.split(" ")[-1]
-            payload = jwt.decode(access_token, ACCESS_PUBLIC_KEY, algorithms=["RS256"])
+            payload = jwt.decode(access_token, settings.ACCESS_PUBLIC_KEY, algorithms=["RS256"])
             return None
         except jwt.ExpiredSignatureError:
             return create_exception_response(AccessTokenExpired)
