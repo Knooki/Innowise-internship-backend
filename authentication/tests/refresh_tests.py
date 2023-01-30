@@ -8,13 +8,10 @@ import datetime
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
-from accounts.serializers.user_serializer import UserSerializer
-from authentication.views import AuthenticationView
 from authentication.models import UserToken
 
 
-from rest_framework.test import APIRequestFactory
-from rest_framework import exceptions
+from rest_framework.test import APIClient
 
 
 class AuthenticationRefreshViewTestCase(TestCase):
@@ -22,56 +19,58 @@ class AuthenticationRefreshViewTestCase(TestCase):
         self.user = User.objects.create_user(
             username="test_user", password="test_password", email="test@gmail.com"
         )
-        self.factory = APIRequestFactory()
-        self.view = AuthenticationView()
+        self.client = APIClient()
 
-    def create_request(self, user_id: int, invalid_ref_tok=None, is_valid=True) -> str:
-
-        refresh_token, payload = self.create_refresh_token(user_id)
-
-        self.update_user_token_table(
-            user_id, refresh_token, payload, invalid_ref_tok, is_valid
-        )
-        request = self.factory.get("/api/v1/auth/refresh/", {})
-        request.COOKIES["refreshtoken"] = refresh_token
-        self.view.request = request
-        return request
+    def test_refresh_return_refresh_token_required(self):
+        response = self.client.get("/api/v1/auth/refresh/", format="json")
+        assert response.status_code == 400
+        assert response.data == {
+            "detail": "Refresh Token not found. Please put it in header named 'Refresh-Token'"
+        }
 
     def test_refresh_raises_user_not_found(self):
-        request = self.create_request(user_id=-3)
-        with self.assertRaisesRegex(
-            exceptions.AuthenticationFailed,
-            "User in refresh key not found. Please sign in again.",
-        ):
-            self.view.refresh(request)
+        refresh_token = self.create_refresh_token(-3)
+
+        self.client.credentials(HTTP_REFRESH_TOKEN=refresh_token)
+        response = self.client.get("/api/v1/auth/refresh/", format="json")
+        assert response.status_code == 400
+        assert response.data == {
+            "detail": "User in this refresh token doesn't exist anymore"
+        }
 
     def test_refresh_raises_invalid_refresh_token(self):
-        request = self.create_request(self.user.id, invalid_ref_tok="invalid token")
-        with self.assertRaisesRegex(
-            exceptions.AuthenticationFailed,
-            "The Refresh Token is invalid. Please sign in again.",
-        ):
-            self.view.refresh(request)
+        refresh_token = "invalid refresh token"
+
+        self.client.credentials(HTTP_REFRESH_TOKEN=refresh_token)
+        response = self.client.get("/api/v1/auth/refresh/", {}, format="json")
+        assert response.status_code == 400
+        assert response.data == {
+            "detail": "No such Refresh Token in database. Please log in again."
+        }
 
     def test_refresh_raises_invalid_refresh_token_based_on_user_token(self):
-        request = self.create_request(self.user.id, is_valid=False)
-        with self.assertRaisesRegex(
-            exceptions.AuthenticationFailed,
-            "The refresh token is invalid, all refresh tokens of this user are deleted. Sign in again.",
-        ):
-            self.view.refresh(request)
+        refresh_token = self.create_refresh_token(self.user.id, is_valid=False)
+
+        self.client.credentials(HTTP_REFRESH_TOKEN=refresh_token)
+        response = self.client.get("/api/v1/auth/refresh/", {}, format="json")
+        assert response.status_code == 400
+        assert response.data == {
+            "detail": "This refresh token is old. All refresh tokens of this user deleted. Please login again"
+        }
 
     def test_refresh_returns_new_access_token(self):
-        request = self.create_request(self.user.id)
-        response = self.view.refresh(request)
+        refresh_token = self.create_refresh_token(self.user.id)
+
+        self.client.credentials(HTTP_REFRESH_TOKEN=refresh_token)
+        response = self.client.get("/api/v1/auth/refresh/", {}, format="json")
+
         assert response.status_code == 200
+        assert response.data["refresh_token"] != None
         assert response.data["access_token"] != None
-        assert response.data["user"] == UserSerializer(self.user).data
         assert response.data["expires_in"] != None
         assert response.data["token_type"] == "Bearer"
-        # хз как проверить то, что в куки возвращается refresh_token...
 
-    def create_refresh_token(self, user_id):
+    def create_refresh_token(self, user_id, is_valid=True):
         payload = {
             "user_id": user_id,
             "exp": datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=30),
@@ -83,16 +82,18 @@ class AuthenticationRefreshViewTestCase(TestCase):
             backend=default_backend(),
         )
         refresh_token = jwt.encode(payload, priv_key, algorithm="RS256")
-        return refresh_token, payload
+        self.update_user_token_table(user_id, refresh_token, payload, is_valid=is_valid)
+        return refresh_token
 
-    def update_user_token_table(
-        self, user_id, refresh_token, payload, invalid_ref_tok=None, is_valid=False
-    ):
-        u_t_refresh_token = invalid_ref_tok or refresh_token
-        UserToken.objects.all().delete()
+    def update_user_token_table(self, user_id, refresh_token, payload, is_valid):
+        user_tokens = UserToken.objects.filter(user_id=user_id)
+        for object in user_tokens:
+            object.is_valid = False
+        UserToken.objects.bulk_update(user_tokens, ["is_valid"])
+
         user_token = UserToken(
             user_id=user_id,
-            refresh_token=u_t_refresh_token,
+            refresh_token=refresh_token,
             expires_at=payload["exp"],
             created_at=payload["iat"],
             is_valid=is_valid,

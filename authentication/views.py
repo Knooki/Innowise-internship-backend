@@ -9,7 +9,7 @@ from django.conf import settings
 from .services.jwt_token_generation import JwtTokenGenerationService
 
 from .serializers.login_serializer import LoginSerializer
-from .serializers.refresh_token_serializer import RefreshTokenSerializer
+from .services.refresh_token_validation_service import RefreshTokenValidationService
 
 
 class AuthenticationView(viewsets.ViewSet):
@@ -23,16 +23,16 @@ class AuthenticationView(viewsets.ViewSet):
 
     @action(detail=False, methods=["GET"], name="refresh")
     def refresh(self, request) -> Response:
-        serializer = RefreshTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user_id = serializer.validated_data
+        refresh_token_service = RefreshTokenValidationService(request)
+        refresh_token_service.validate()
+        user_id = refresh_token_service.get_validated_user_id()
         data = JwtTokenGenerationService(user_id).generate_data_for_response()
         return Response(data=data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["PATCH"], name="password_reset")
     def password_reset(self, request) -> Response:
         # there will be email service
-        
+
         # user = AccessTokenService(request=request).validate_and_return_user()
         # serializer = PasswordResetSerializer(data=request.data, user=user)
         # serializer.is_valid(raise_exception=True)
