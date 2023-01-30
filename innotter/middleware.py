@@ -3,11 +3,11 @@ import re
 
 from django.utils.deprecation import MiddlewareMixin
 
-from .access_token_exceptions import (
+from .jwt_token_exceptions import (
     AccessTokenExpired,
     InvalidAccessToken,
     AccessTokenNotFound,
-    NoKeywordInAuthorization,
+    BearerKeywordNotFound,
 )
 
 from innotter.settings import (
@@ -34,7 +34,7 @@ class JWTMiddleware(MiddlewareMixin):
             raise AccessTokenNotFound
 
         if not re.fullmatch(REGEX_BEARER, authorization_header_value):
-            raise NoKeywordInAuthorization
+            raise BearerKeywordNotFound
         try:
             access_token = authorization_header_value.split(" ")[-1]
             payload = jwt.decode(access_token, ACCESS_PUBLIC, algorithms=["RS256"])
