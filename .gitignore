@@ -16,9 +16,9 @@ db.sqlite3
 
 # rsa keys
 /rsa_keys
-diagrams/
 
 # test
+fixtures.json
 htmlcov/
 .coverage
 .coverage.*
