@@ -41,10 +41,10 @@ class TestJwtToken:
             + datetime.timedelta(days=0, minutes=2),
             created_at=datetime.datetime.utcnow(),
         )
-        refresh_token1 = JwtTokenGenerationService(-3).generate_refresh_token()
-        refresh_token2 = JwtTokenGenerationService(-3).generate_refresh_token()
+        refresh_token = JwtTokenGenerationService(-3).generate_refresh_token()
         
-        user_token1 = UserToken.objects.filter(refresh_token=refresh_token1).first()
-        user_token2 = UserToken.objects.filter(refresh_token=refresh_token2).first()
+        user_token1 = UserToken.objects.filter(refresh_token="Some Token").first()
+        user_token2 = UserToken.objects.filter(refresh_token=refresh_token).first()
+
         assert user_token1 and  user_token1.is_valid == False
         assert user_token2 and user_token2.is_valid == True
