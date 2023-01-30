@@ -26,7 +26,8 @@ class BearerKeywordNotFound(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "Authorization header must start with Bearer followed by its token"
     default_code = "No Keyword found in Authorization header"
-    
+
+
 class UserInAccessTokenNotFound(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "There is user in database with such id"
