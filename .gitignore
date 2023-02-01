@@ -16,3 +16,4 @@ db.sqlite3
 
 # rsa keys
 /rsa_keys
+diagrams/
