@@ -25,13 +25,19 @@ class JwtTokenGenerationService:
 
         return data
 
-    def generate_access_token(self):
+    def _generate_payload(self, days: int, minutes: int) -> dict:
         payload = {
             "user_id": self.user_id,
             "exp": datetime.datetime.utcnow()
-            + datetime.timedelta(days=0, minutes=settings.ACCESS_EXPIRES_IN_MINUTES),
+            + datetime.timedelta(days=days, minutes=minutes),
             "iat": datetime.datetime.utcnow(),
         }
+        return payload
+
+    def generate_access_token(self):
+        payload = self._generate_payload(
+            days=0, minutes=settings.ACCESS_EXPIRES_IN_MINUTES
+        )
         priv_key = serialization.load_pem_private_key(
             settings.ACCESS_PRIVATE_KEY,
             settings.ACCESS_PASSPHRASE,
@@ -41,12 +47,9 @@ class JwtTokenGenerationService:
         return jwt_token
 
     def generate_refresh_token(self):
-        payload = {
-            "user_id": self.user_id,
-            "exp": datetime.datetime.utcnow()
-            + datetime.timedelta(days=settings.REFRESH_EXPIRES_IN_DAYS, minutes=0),
-            "iat": datetime.datetime.utcnow(),
-        }
+        payload = self._generate_payload(
+            days=settings.REFRESH_EXPIRES_IN_DAYS, minutes=0
+        )
         priv_key = serialization.load_pem_private_key(
             settings.REFRESH_PRIVATE_KEY,
             settings.REFRESH_PASSPHRASE,

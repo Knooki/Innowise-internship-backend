@@ -19,9 +19,11 @@ db.sqlite3
 diagrams/
 
 # test
-fixtures.json
+authentication/tests/fixtures.json
 htmlcov/
 .coverage
 .coverage.*
 coverage.xml
 *.cover
+
+diagrams/

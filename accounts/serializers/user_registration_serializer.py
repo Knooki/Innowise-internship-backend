@@ -5,7 +5,7 @@ from ..models import User
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
 
-    password_again = serializers.CharField(
+    confirm_password = serializers.CharField(
         style={"input_type": "password"}, write_only=True
     )
 
@@ -17,11 +17,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "password",
-            "password_again",
+            "confirm_password",
         )
         extra_kwargs = {
             "password": {"write_only": True},
-            "password_again": {"write_only": True},
+            "confirm_password": {"write_only": True},
             "first_name": {"required": True},
             "last_name": {"required": True},
         }
@@ -37,9 +37,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
         password = self.validated_data["password"]
-        password_again = self.validated_data["password_again"]
+        confirm_password = self.validated_data["confirm_password"]
 
-        if password != password_again:
+        if password != confirm_password:
             raise serializers.ValidationError({"password": "Passwords must match."})
         user.set_password(password)
         user.save()

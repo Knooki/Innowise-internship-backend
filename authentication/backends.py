@@ -3,9 +3,9 @@ import re
 
 from django.conf import settings
 
-from rest_framework import authentication, exceptions
+from rest_framework import authentication
 
-from accounts.models import User
+from .services.user_validation_service import validate_user_service
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
@@ -21,25 +21,9 @@ class JWTAuthentication(authentication.BaseAuthentication):
         auth_header = authentication.get_authorization_header(request).split()
         access_token = auth_header[1].decode("utf-8")
 
-        return self._authenticate_credentials(request, access_token)
-
-    def _authenticate_credentials(self, request, token):
         payload = jwt.decode(
-            token, settings.ACCESS_PUBLIC_KEY, algorithms=["RS256"]
+            access_token, settings.ACCESS_PUBLIC_KEY, algorithms=["RS256"]
         )
 
-        try:
-            user = User.objects.get(pk=payload["user_id"])
-        except User.DoesNotExist:
-            msg = "User in given token not found."
-            raise exceptions.AuthenticationFailed(msg)
-
-        if not user.is_active:
-            msg = "Given user is deactivated."
-            raise exceptions.AuthenticationFailed(msg)
-
-        if user.is_blocked:
-            msg = "Given user is blocked."
-            raise exceptions.AuthenticationFailed(msg)
-
-        return (user, token)
+        user = validate_user_service(payload["user_id"])
+        return (user, access_token)
