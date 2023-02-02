@@ -19,7 +19,6 @@ db.sqlite3
 diagrams/
 
 # test
-authentication/tests/fixtures.json
 htmlcov/
 .coverage
 .coverage.*
