@@ -1,9 +1,13 @@
 import pytest
 import jwt
 import datetime
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from rest_framework.test import APIClient
+from django.conf import settings as set
 
+from exceptions.utils import create_exception_response
 from exceptions.jwt_token_exceptions import (
     AccessTokenExpired,
     AccessTokenNotFound,
@@ -11,11 +15,8 @@ from exceptions.jwt_token_exceptions import (
     BearerKeywordNotFound,
 )
 
-from rest_framework.test import APIClient
 
-from exceptions.utils import create_exception_response
 
-from django.conf import settings
 
 
 @pytest.fixture
@@ -32,8 +33,8 @@ def valid_access_token_fixture():
         "iat": datetime.datetime.utcnow(),
     }
     priv_key = serialization.load_pem_private_key(
-        settings.ACCESS_PRIVATE_KEY,
-        settings.ACCESS_PASSPHRASE,
+        set.ACCESS_PRIVATE_KEY,
+        set.ACCESS_PASSPHRASE,
         backend=default_backend(),
     )
     access_token = jwt.encode(payload, priv_key, algorithm="RS256")
@@ -48,8 +49,8 @@ def expired_access_token_fixture():
         "iat": datetime.datetime.utcnow(),
     }
     priv_key = serialization.load_pem_private_key(
-        settings.ACCESS_PRIVATE_KEY,
-        settings.ACCESS_PASSPHRASE,
+        set.ACCESS_PRIVATE_KEY,
+        set.ACCESS_PASSPHRASE,
         backend=default_backend(),
     )
     access_token = jwt.encode(payload, priv_key, algorithm="RS256")
