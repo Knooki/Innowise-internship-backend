@@ -1,16 +1,14 @@
 import pytest
-from accounts.models import User
-
-from django.conf import settings
 import jwt
 import datetime
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from rest_framework.test import APIClient
+from django.conf import settings as set
 
 from authentication.models import UserToken
-
-
-from rest_framework.test import APIClient
+from accounts.models import User
 
 
 def update_user_token_table(user_id, refresh_token, payload, is_valid):
@@ -36,8 +34,8 @@ def create_refresh_token(user_id, is_valid=True):
         "iat": datetime.datetime.utcnow(),
     }
     priv_key = serialization.load_pem_private_key(
-        settings.REFRESH_PRIVATE_KEY,
-        settings.REFRESH_PASSPHRASE,
+        set.REFRESH_PRIVATE_KEY,
+        set.REFRESH_PASSPHRASE,
         backend=default_backend(),
     )
     refresh_token = jwt.encode(payload, priv_key, algorithm="RS256")

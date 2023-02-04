@@ -1,12 +1,12 @@
 import datetime
 import jwt
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
+from django.conf import settings as set
 
-from ..models import UserToken
-
-from django.conf import settings
+from authentication.models import UserToken
 
 
 class JwtTokenGenerationService:
@@ -19,7 +19,7 @@ class JwtTokenGenerationService:
         data = {
             "refresh_token": refresh_token,
             "access_token": access_token,
-            "expires_in": settings.ACCESS_EXPIRES_IN_MINUTES * 60,
+            "expires_in": set.ACCESS_EXPIRES_IN_MINUTES * 60,
             "token_type": "Bearer",
         }
 
@@ -35,24 +35,20 @@ class JwtTokenGenerationService:
         return payload
 
     def generate_access_token(self):
-        payload = self._generate_payload(
-            days=0, minutes=settings.ACCESS_EXPIRES_IN_MINUTES
-        )
+        payload = self._generate_payload(days=0, minutes=set.ACCESS_EXPIRES_IN_MINUTES)
         priv_key = serialization.load_pem_private_key(
-            settings.ACCESS_PRIVATE_KEY,
-            settings.ACCESS_PASSPHRASE,
+            set.ACCESS_PRIVATE_KEY,
+            set.ACCESS_PASSPHRASE,
             backend=default_backend(),
         )
         jwt_token = jwt.encode(payload, priv_key, algorithm="RS256")
         return jwt_token
 
     def generate_refresh_token(self):
-        payload = self._generate_payload(
-            days=settings.REFRESH_EXPIRES_IN_DAYS, minutes=0
-        )
+        payload = self._generate_payload(days=set.REFRESH_EXPIRES_IN_DAYS, minutes=0)
         priv_key = serialization.load_pem_private_key(
-            settings.REFRESH_PRIVATE_KEY,
-            settings.REFRESH_PASSPHRASE,
+            set.REFRESH_PRIVATE_KEY,
+            set.REFRESH_PASSPHRASE,
             backend=default_backend(),
         )
         jwt_token = jwt.encode(payload, priv_key, algorithm="RS256")

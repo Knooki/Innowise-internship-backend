@@ -1,17 +1,14 @@
 import pytest
 import jwt
 import datetime
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
-from django.conf import settings
-
-from accounts.models import User
-
+from django.conf import settings as set
 from rest_framework import exceptions
-
 from rest_framework.test import APIRequestFactory
 
-
+from accounts.models import User
 from authentication.backends import JWTAuthentication
 
 
@@ -22,8 +19,8 @@ def generate_access_token(user_id: int) -> str:
         "iat": datetime.datetime.utcnow(),
     }
     priv_key = serialization.load_pem_private_key(
-        settings.ACCESS_PRIVATE_KEY,
-        settings.ACCESS_PASSPHRASE,
+        set.ACCESS_PRIVATE_KEY,
+        set.ACCESS_PASSPHRASE,
         backend=default_backend(),
     )
     access_token = jwt.encode(payload, priv_key, algorithm="RS256")

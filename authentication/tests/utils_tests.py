@@ -2,18 +2,17 @@ import pytest
 import jwt
 import datetime
 
+from django.conf import settings as set
 
 from authentication.services.jwt_token_generation import JwtTokenGenerationService
 from authentication.models import UserToken
-
-from django.conf import settings as sett
 
 
 class TestJwtToken:
     def test_generation_of_access_token(self):
         access_token = JwtTokenGenerationService(1).generate_access_token()
 
-        payload = jwt.decode(access_token, sett.ACCESS_PUBLIC_KEY, algorithms=["RS256"])
+        payload = jwt.decode(access_token, set.ACCESS_PUBLIC_KEY, algorithms=["RS256"])
         assert payload["user_id"] == 1
 
     @pytest.mark.django_db
@@ -21,7 +20,7 @@ class TestJwtToken:
         refresh_token = JwtTokenGenerationService(1).generate_refresh_token()
 
         payload = jwt.decode(
-            refresh_token, sett.REFRESH_PUBLIC_KEY, algorithms=["RS256"]
+            refresh_token, set.REFRESH_PUBLIC_KEY, algorithms=["RS256"]
         )
 
         assert payload["user_id"] == 1

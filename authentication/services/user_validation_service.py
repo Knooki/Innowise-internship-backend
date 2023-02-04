@@ -1,6 +1,6 @@
-from accounts.models import User
 from rest_framework import exceptions
 
+from accounts.models import User
 
 MESSAGES = {
     "UserNotFound": "User in given token not found.",

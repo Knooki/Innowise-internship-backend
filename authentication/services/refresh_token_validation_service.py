@@ -1,10 +1,14 @@
 from rest_framework import serializers
 
 from authentication.models import UserToken
-
 from accounts.models import User
+from exceptions.jwt_token_exceptions import (
+    RefreshTokenIsOld,
+    RefreshTokenNotFound,
+    InvalidRefreshToken,
+    UserInRefreshTokenNotFound,
+)
 
-from exceptions.jwt_token_exceptions import RefreshTokenIsOld, RefreshTokenNotFound, InvalidRefreshToken, UserInRefreshTokenNotFound
 
 class RefreshTokenValidationService:
     def __init__(self, request):
@@ -30,7 +34,7 @@ class RefreshTokenValidationService:
         self.user_id = user_token.user_id
 
     def get_validated_user_id(self) -> int:
-        if self.user_id:        
+        if self.user_id:
             return self.user_id
         msg = {"user_id": "Received refresh_token not validated yet."}
         raise serializers.ValidationError(msg, code="authorization")

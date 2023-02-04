@@ -1,13 +1,8 @@
 from rest_framework.response import Response
-from rest_framework import viewsets, status, exceptions
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 
-from accounts.models import User
-
-from django.conf import settings
-
 from .services.jwt_token_generation import JwtTokenGenerationService
-
 from .serializers.login_serializer import LoginSerializer
 from .services.refresh_token_validation_service import RefreshTokenValidationService
 

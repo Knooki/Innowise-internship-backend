@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
-from .serializers.user_registration_serializer import UserRegistrationSerializer
-from .serializers.user_serializer import UserSerializer
 from rest_framework.response import Response
+
+from .serializers.user_serializer import UserSerializer
+from .serializers.user_registration_serializer import UserRegistrationSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

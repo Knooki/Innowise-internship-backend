@@ -2,8 +2,6 @@ from rest_framework import serializers
 
 from accounts.models import User
 
-from django.conf import settings
-
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)
