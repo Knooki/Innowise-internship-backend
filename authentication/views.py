@@ -3,8 +3,8 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 
 from .services.jwt_token_generation import JwtTokenGenerationService
-from .serializers.login_serializer import LoginSerializer
 from .services.refresh_token_validation_service import RefreshTokenValidationService
+from .serializers.login_serializer import LoginSerializer
 
 
 class AuthenticationView(viewsets.ViewSet):
