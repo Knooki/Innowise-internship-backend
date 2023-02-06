@@ -40,6 +40,10 @@ class Post(models.Model):
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="posts")
     content = models.CharField(max_length=180)
 
+    likes = models.ManyToManyField(
+        "accounts.User", related_name="likes", blank=True
+    )
+
     reply_to = models.ForeignKey(
         "posts.Post",
         on_delete=models.SET_NULL,
