@@ -15,7 +15,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
             re.fullmatch(pattern, request.path)
             for pattern in set.JWT_UNAUTHENTICATED_URL_PATTERNS
         ):
-            return None
+            return None, None
 
         auth_header = authentication.get_authorization_header(request).split()
         access_token = auth_header[1].decode("utf-8")

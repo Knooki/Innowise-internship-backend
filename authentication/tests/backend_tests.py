@@ -72,7 +72,7 @@ class TestAuthenticationBackend:
     def test_backend_returns_null_if_unauthenticated_url_patterns(self, api_factory):
         request = api_factory.get("/admin/", {}, format="json")
         user = JWTAuthentication().authenticate(request)
-        assert user == None
+        assert user == (None, None)
 
     def test_backend_raises_user_not_found(self, api_factory, invalid_user_token):
         request = api_factory.get("/api/v1/accounts/", {}, format="json")
