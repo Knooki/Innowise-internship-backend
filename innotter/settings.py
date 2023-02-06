@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # Local
     "accounts",
     "authentication",
+    "posts",
 ]
 
 MIDDLEWARE = [
@@ -99,9 +100,7 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "authentication.backends.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("authentication.backends.JWTAuthentication",),
     #  "DEFAULT_PERMISSION_CLASSES": [
     #     "rest_framework.permissions.IsAuthenticated",
     # ],
