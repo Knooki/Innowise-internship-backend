@@ -24,5 +24,3 @@ htmlcov/
 .coverage.*
 coverage.xml
 *.cover
-
-diagrams/
