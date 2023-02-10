@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "accounts",
     "authentication",
     "posts",
+    # silk
+    "silk",
 ]
 
 MIDDLEWARE = [
@@ -60,6 +62,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # Local
     "innotter.middleware.JWTMiddleware",
+    # silk
+    "silk.middleware.SilkyMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
