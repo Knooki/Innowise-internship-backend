@@ -7,11 +7,10 @@ from cryptography.hazmat.primitives import serialization
 from rest_framework.test import APIClient
 from django.conf import settings as set
 
-from exceptions.utils import create_exception_response
 from exceptions.jwt_token_exceptions import (
     AccessTokenExpired,
-    AccessTokenNotFound,
     InvalidAccessToken,
+    AccessTokenNotFound,
     BearerKeywordNotFound,
 )
 
@@ -59,7 +58,7 @@ def expired_access_token_fixture():
 
 @pytest.mark.django_db
 def test_middleware_skips_unauthenticated_urls(client):
-    client.get("/api/v1/auth/refresh", {}, format="json")
+    client.get("/admin/", {}, format="json")
 
 
 @pytest.mark.django_db
@@ -70,32 +69,24 @@ def test_middleware_skips_valid_token(valid_access_token_fixture, client):
 
 def test_middleware_raises_AccessTokenExpired(expired_access_token_fixture, client):
     client.credentials(HTTP_AUTHORIZATION="Bearer " + expired_access_token_fixture)
-    response = client.get("/api/v1/accounts/", {}, format="json")
-    result_resp = create_exception_response(AccessTokenExpired)
-    assert response.content == result_resp.content
-    assert response.status_code == result_resp.status_code
-
+    with pytest.raises(AccessTokenExpired):
+        client.get("/api/v1/accounts/", {}, format="json")
 
 def test_middleware_raises_AccessTokenNotFound(client):
     client.credentials()
-    response = client.get("/api/v1/accounts/", {}, format="json")
-    result_resp = create_exception_response(AccessTokenNotFound)
+    with pytest.raises(AccessTokenNotFound):
+        client.get("/api/v1/accounts/", {}, format="json")
 
-    assert response.content == result_resp.content
-    assert response.status_code == result_resp.status_code
 
 
 def test_middleware_raises_NoKeywordInAuthorization(client):
     client.credentials(HTTP_AUTHORIZATION="Token")
-    response = client.get("/api/v1/accounts/", {}, format="json")
-    result_resp = create_exception_response(BearerKeywordNotFound)
-    assert response.content == result_resp.content
-    assert response.status_code == result_resp.status_code
+    with pytest.raises(BearerKeywordNotFound):
+        client.get("/api/v1/accounts/", {}, format="json")
+  
 
 
 def test_middleware_raises_InvalidAccessToken(client):
     client.credentials(HTTP_AUTHORIZATION="Bearer " + "Invalid Token")
-    response = client.get("/api/v1/accounts/", {}, format="json")
-    result_resp = create_exception_response(InvalidAccessToken)
-    assert response.content == result_resp.content
-    assert response.status_code == result_resp.status_code
+    with pytest.raises(InvalidAccessToken):
+        client.get("/api/v1/accounts/", {}, format="json")

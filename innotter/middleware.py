@@ -31,7 +31,7 @@ class JWTMiddleware(MiddlewareMixin):
             raise (BearerKeywordNotFound)
         try:
             access_token = authorization_header_value.split(" ")[-1]
-            payload = jwt.decode(
+            jwt.decode(
                 access_token, set.ACCESS_PUBLIC_KEY, algorithms=["RS256"]
             )
             return None
