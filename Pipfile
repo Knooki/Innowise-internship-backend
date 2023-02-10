@@ -9,6 +9,9 @@ psycopg2-binary = "*"
 djangorestframework = "*"
 environs = "*"
 dj-database-url = "*"
+django-cors-headers = "*"
+pyjwt = {extras = ["crypto"], version = "*"}
+pytest-django = "*"
 
 [dev-packages]
 

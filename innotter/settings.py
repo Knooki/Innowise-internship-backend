@@ -42,15 +42,23 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3rd party packages
+    "rest_framework",
+    "corsheaders",
+    # Local
     "accounts",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    # 'csp.middleware.CSPMiddleware',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Local
+    "innotter.middleware.JWTMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -90,6 +98,15 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    # "DEFAULT_AUTHENTICATION_CLASSES": (
+    #     "authentication.authentication.SafeJWTAuthentication",
+    # ),
+        #  "DEFAULT_PERMISSION_CLASSES": [
+        #     "rest_framework.permissions.IsAuthenticated",
+        # ],
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -109,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = "accounts.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -132,3 +149,23 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS")
+
+CORS_ORIGIN_WHITELIST = tuple(env.list("CORS_ALLOWED_ORIGINS"))
+CORS_ALLOW_CREDENTIALS = True
+
+ACCESS_PUBLIC_KEY = bytes(env.str("ACCESS_TOKEN_PUBLIC_KEY"), "utf-8")
+ACCESS_PRIVATE_KEY = bytes(env.str("ACCESS_TOKEN_PRIVATE_KEY"), "utf-8")
+ACCESS_PASSPHRASE = bytes(env.str("ACCESS_TOKEN_PASSPHRASE"), "utf-8")
+ACCESS_EXPIRES_IN_MINUTES = env.int("ACCESS_TOKEN_EXPIRES_IN_MINUTES")
+
+REFRESH_PUBLIC_KEY = bytes(env.str("REFRESH_TOKEN_PUBLIC_KEY"), "utf-8")
+REFRESH_PRIVATE_KEY = bytes(env.str("REFRESH_TOKEN_PRIVATE_KEY"), "utf-8")
+REFRESH_PASSPHRASE = bytes(env.str("REFRESH_TOKEN_PASSPHRASE"), "utf-8")
+REFRESH_EXPIRES_IN_DAYS = env.int("REFRESH_TOKEN_EXPIRES_IN_DAYS")
+
+JWT_UNAUTHENTICATED_URL_PATTERNS = env.list("JWT_UNAUTHENTICATED_URL_PATTERNS")
+REGEX_BEARER = env.str("REGEX_BEARER")
+
+INTERNAL_EXTRA_JWT_OPTIONS = env.dict("INTERNAL_EXTRA_JWT_OPTIONS")
