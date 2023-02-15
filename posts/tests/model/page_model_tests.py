@@ -4,7 +4,7 @@ from posts.models import Page
 from accounts.models import User
 
 
-class PageTestCase(TestCase):
+class PageModelTestCase(TestCase):
     def setUp(self):
         self.page = Page(
             name="test_page",
