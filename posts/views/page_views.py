@@ -2,13 +2,16 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from posts.serializers.pages.page_serializers import ShortInfoPageSerializer
+from posts.serializers.pages.page_serializers import (
+    ShortInfoPageSerializer,
+    FullAccessPageSerializer,
+)
 from posts.serializers.pages.block_page_serializer import BlockPageSerializer
 from posts.services.follow_request_service import FollowRequestService
 from posts.services.page_access_level_service import PageAccessLevelService
 from posts.services.page_block_status_service import PageBlockStatusService
 from posts.permissions import (
-    ForbidAccess,
+    ReadOnly,
     IsFollower,
     IsAdminOrModerator,
     IsOwner,
@@ -18,6 +21,9 @@ from posts.permissions import (
 
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = ShortInfoPageSerializer
+    permission_classes = [
+        ReadOnly | IsFollower | IsAdminOrModerator | IsOwner | IsAuthenticatedUser
+    ]
 
     def get_queryset(self):
         service = PageBlockStatusService(self.request)
@@ -25,30 +31,30 @@ class PageViewSet(viewsets.ModelViewSet):
         queryset = service.get_query_set()
         return queryset
 
-    def get_permissions(self):
-        permission_classes = []
-        match self.action:
-            case "list" | "retrieve":
-                permission_classes = []
-            case "create" | "follow":
-                permission_classes = [IsAuthenticatedUser]
-            case "partial_update" | "follow_requests":
-                permission_classes = [IsOwner]
-            case "destroy":
-                permission_classes = [IsOwner | IsAdminOrModerator]
-            case "blocktime":
-                permission_classes = [IsAdminOrModerator]
-            case "unfollow":
-                permission_classes = [IsFollower]
-            case _:
-                permission_classes = [ForbidAccess]
+    def partial_update(self, request, pk=None):
+        # Here we customize a serializer for our patch method
+        page = self.get_object()
+        serializer = FullAccessPageSerializer(instance=page, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        serializer.save()
 
-        return [permission() for permission in permission_classes]
+        return Response(serializer.data)
+
+    def create(self, request):
+        # little customization of create method
+        # adding to owner of the page current user
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=request.user)
+
+        return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         user = request.user
         page = self.get_object()
-        serializer = PageAccessLevelService().get_serializer(page, user)
+        service = PageAccessLevelService()
+        serializer = service.get_serializer(page=page, user=user)
         return Response(serializer.data)
 
     @action(
@@ -65,20 +71,17 @@ class PageViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=["GET", "PATCH"],
+        methods=["PATCH"],
         url_path="follow_requests/?(?P<f_pk>[^/.]+)?",
     )
     def follow_requests(self, request, pk=None, f_pk=None) -> Response:
+        is_confirmed = request.query_params.get("is_confirmed")
         page = self.get_object()
-        service = FollowRequestService(page, f_pk)
+        service = FollowRequestService(page, f_pk, is_confirmed)
+        service.validate()
         service.is_private_page()
-
-        if request.method == "GET":
-            data = service.get_follow_requests()
-        else:
-            service.confirm_subscription()
-            data = page.follow_requests.values()
-
+        service.update_follow_requests()
+        data = page.follow_requests.values()
         return Response(data=data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PATCH"], name="follow")

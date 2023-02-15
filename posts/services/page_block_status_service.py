@@ -1,7 +1,7 @@
 import datetime
 import pytz
 
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from posts.models import Page
 
@@ -26,10 +26,14 @@ class PageBlockStatusService:
         Returns different queryset based on user role.
         """
         user = self.request.user
-        queryset = Page.objects.select_related("owner").prefetch_related(
-            "tags", "followers", "follow_requests"
+        queryset = (
+            Page.objects.select_related("owner")
+            .prefetch_related("tags", "followers", "follow_requests")
+            .annotate(followers_count=Count("followers"))
         )
-        if user.role not in ("admin", "moderator"):
-            queryset = queryset.filter(is_permanent_blocked=False, unblock_date=None)
+        if user and user.role not in ("admin", "moderator"):
+            queryset = queryset.filter(
+                is_permanent_blocked=False, unblock_date=None
+            ).annotate(followers_count=Count("followers"))
 
         return queryset

@@ -1,22 +1,24 @@
 from posts.serializers.pages.page_serializers import (
-    AdminAccessPageSerializer,
-    FullAccessPageSerilizer,
-    PartialAccessPageSerializer,
+    FullAccessPageSerializer,
+    FollowerAccessPageSerializer,
+    NonFollowerAccessPageSerializer,
 )
 
 
 class PageAccessLevelService:
-    def get_serializer(page, user):
+    def get_serializer(self, page, user):
         """
         Depending on private status of the page
         and user identity
-        returns proper serializer 
-        with restricted/full access to the page info 
+        returns proper serializer
+        with restricted/full access to the page info
         """
-        if page.is_private and user not in page.followers.all() and user != page.owner:
-            serializer = PartialAccessPageSerializer(page)
-        elif user.role in ("admin", "moderator"):
-            serializer = AdminAccessPageSerializer(page)
+        if user and (user.role in ("admin", "moderator") or user == page.owner):
+            serializer = FullAccessPageSerializer(page)
+        elif (
+            page.is_private and user not in page.followers.all() and user != page.owner
+        ):
+            serializer = NonFollowerAccessPageSerializer(page)
         else:
-            serializer = FullAccessPageSerilizer(page)
+            serializer = FollowerAccessPageSerializer(page)
         return serializer

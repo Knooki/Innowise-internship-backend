@@ -1,42 +1,53 @@
 from rest_framework import permissions
 
+from posts.models import Page
+
 # POST(create), GET(all)
 # DELETE, PUT(update), PATCH(partitial update)
 
 
-class ForbidAccess(permissions.BasePermission):
+class ReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
+        if view.action in ("list", "retrieve"):
+            return request.user
         return False
 
 
 class IsAdminOrModerator(permissions.BasePermission):
     def has_permission(self, request, view):
-        user = request.user
-        is_admin = bool(user and user.role in ("admin", "moderator"))
-        return is_admin
+        if view.action in ("destroy", "blocktime"):
+            user = request.user
+            return user and user.role in ("admin", "moderator")
+        return False
 
 
 class IsAuthenticatedUser(permissions.BasePermission):
     def has_permission(self, request, view):
-        user = request.user
-        return user and user.role == "user"
+        if view.action in ("create", "follow"):
+            user = request.user
+            return user and user.role == "user"
+        return False
 
 
 class IsOwner(permissions.BasePermission):
     def has_permission(self, request, view):
-        print("1")
-        user = request.user
-        return user and user.role == "user"
-    
-    def has_object_permission(self, request, view, obj):
-        print("2)")
-        user = request.user
-        return user and obj.owner == user
+        if view.action in ("partial_update", "follow_requests", "destroy"):
+            user = request.user
+            page_id = view.kwargs.get("pk", None)
+            page = Page.objects.get(pk=page_id)
+            return user and page.owner == user
+        return False
 
 
 class IsFollower(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if view.action == "unfollow":
+            user = request.user
+            return user and user.role == "user"
+        return False
+
     def has_object_permission(self, request, view, obj):
-        user = request.user
-        if user in obj.followers.all():
-            return True
+        if view.action == "unfollow":
+            user = request.user
+            return user in obj.followers.all()
         return False

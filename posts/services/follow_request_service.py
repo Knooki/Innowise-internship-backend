@@ -1,13 +1,24 @@
 from rest_framework import exceptions
 from django.core.exceptions import ObjectDoesNotExist
 
-from accounts.serializers.user_serializer import UserSerializer
-
 
 class FollowRequestService:
-    def __init__(self, page, f_pk=None):
+    def __init__(self, page, f_pk=None, is_confirmed=True):
         self.page = page
         self.f_pk = f_pk
+        self.is_confirmed = is_confirmed
+
+    def validate(self):
+        if self.is_confirmed == None:
+            self.is_confirmed = True
+        elif self.is_confirmed.lower() == "true":
+            self.is_confirmed = True
+        elif self.is_confirmed.lower() == "false":
+            self.is_confirmed = False
+        else:
+            raise exceptions.ValidationError(
+                detail={"is_confirmed": ["should equal False or True"]}
+            )
 
     def is_private_page(self):
         "check if follow request even needed"
@@ -23,23 +34,18 @@ class FollowRequestService:
         except ObjectDoesNotExist:
             raise exceptions.NotFound("Follow Request with such id not found")
 
-    def get_follow_requests(self):
-        if self.f_pk:
-            user = self.get_user_from_follow_request()
-            return UserSerializer(instance=user).data
-        else:
-            return self.page.follow_requests.values()
-
-    def confirm_subscription(self):
+    def update_follow_requests(self):
         if self.f_pk:
             user = self.get_user_from_follow_request()
             self.page.follow_requests.remove(user)
-            self.page.followers.add(self.f_pk)
+            if self.is_confirmed:
+                self.page.followers.add(self.f_pk)
         else:
             users = self.page.follow_requests.all()
             for user in users:
                 self.page.follow_requests.remove(user)
-                self.page.followers.add(user)
+                if self.is_confirmed:
+                    self.page.followers.add(user)
 
         self.page.save()
 
