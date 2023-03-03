@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     # Local
     "accounts",
     "authentication",
+    "posts",
+    # silk
+    "silk",
 ]
 
 MIDDLEWARE = [
@@ -59,6 +62,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # Local
     "innotter.middleware.JWTMiddleware",
+    # silk
+    "silk.middleware.SilkyMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -99,9 +104,7 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "authentication.backends.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("authentication.backends.JWTAuthentication",),
     #  "DEFAULT_PERMISSION_CLASSES": [
     #     "rest_framework.permissions.IsAuthenticated",
     # ],

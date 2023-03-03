@@ -15,6 +15,7 @@ cryptography = "*"
 pytest-django = "*"
 django-csp = "*"
 coverage = "*"
+django-silk = "*"
 
 [dev-packages]
 
