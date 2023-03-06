@@ -2,9 +2,6 @@ from rest_framework import permissions
 
 from posts.models import Page
 
-# POST(create), GET(all)
-# DELETE, PUT(update), PATCH(partitial update)
-
 
 class ReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):

@@ -10,7 +10,7 @@ from posts.serializers.pages.block_page_serializer import BlockPageSerializer
 from posts.services.follow_request_service import FollowRequestService
 from posts.services.page_access_level_service import PageAccessLevelService
 from posts.services.page_block_status_service import PageBlockStatusService
-from posts.permissions import (
+from posts.permissions.page_permissions import (
     ReadOnly,
     IsFollower,
     IsAdminOrModerator,
@@ -21,9 +21,9 @@ from posts.permissions import (
 
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = ShortInfoPageSerializer
-    permission_classes = [
+    permission_classes = (
         ReadOnly | IsFollower | IsAdminOrModerator | IsOwner | IsAuthenticatedUser
-    ]
+    )
 
     def get_queryset(self):
         service = PageBlockStatusService(self.request)
@@ -34,7 +34,8 @@ class PageViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None):
         # Here we customize a serializer for our patch method
         page = self.get_object()
-        serializer = FullAccessPageSerializer(instance=page, data=request.data, partial=True)
+        serializer = FullAccessPageSerializer(
+            instance=page, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         serializer.save()
@@ -87,7 +88,8 @@ class PageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["PATCH"], name="follow")
     def follow(self, request, pk=None):
         page = self.get_object()
-        FollowRequestService(page=page).validate_and_add_follow_request(request)
+        FollowRequestService(
+            page=page).validate_and_add_follow_request(request)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PATCH"], name="unfollow")
